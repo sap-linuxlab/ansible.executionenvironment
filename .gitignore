@@ -1,3 +1,7 @@
+# Ignore AppleSpare files
+*DScache
+# Ignore temporary podman build files
+context/
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[codz]
