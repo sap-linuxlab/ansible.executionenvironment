@@ -1,5 +1,5 @@
  #.github/workflows/build-ee-latest.yml
-name: Build and Push Multi-Arch Execution Environment
+name: Build and Push latest Multi-Arch Execution Environment
 
 on:
   push:
@@ -13,6 +13,9 @@ env:
 jobs:
   build:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
     strategy:
       fail-fast: false
       # Matrix-Strategie, um Builds parallel auszuführen, falls Runner verfügbar sind.
