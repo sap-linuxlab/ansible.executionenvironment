@@ -9,34 +9,37 @@ dependencies:
     package_pip: ansible-core<=2.17
   ansible_runner:
     package_pip: ansible-runner
-  python_interpreter: 
+  python_interpreter:
     package_system: "python3.12"
     python_path: "/usr/bin/python3.12"
   galaxy:
     roles:
         - src: mk-ansible-roles.check_reboot
-        - src: mk-ansible-roles.subscribe_rhn
         - src: mk-ansible-roles.setup_nfs_server
     collections:
         - name: azure.azcollection
         - name: google.cloud
+        - name: amazon.aws
+        - name: community.aws
         - name: vmware.vmware_rest
         - name: community.vmware
           #version: 3.9.0
         - name: openstack.cloud
           #version: 1.8.0
+        - name: kubernetes.core
         - name: fedora.linux_system_roles
-        - name: community.general
         - name: ansible.posix
+        - name: ansible.utils
+        - name: community.general
+        - name: community.crypto
+        # SAP Community Roles
         - name: community.sap_libs
         - name: community.sap_operations
         - name: community.sap_install
         - name: community.sap_launchpad
-        - name: community.crypto 
-        - name: kubernetes.core
-        - name: ansible.utils
+        - name: community.sap_infrastructure
   python: requirements.txt
-  system: 
+  system:
     - gcc
     - gcc-c++
     - python3.12-devel
