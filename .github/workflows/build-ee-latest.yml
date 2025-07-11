@@ -24,7 +24,7 @@ jobs:
         platform:
           - amd64
           - arm64
-          - ppc64le
+          # ppc64le
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -78,5 +78,5 @@ jobs:
           podman manifest create ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
           podman manifest add ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest docker://${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:amd64
           podman manifest add ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest docker://${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:arm64
-          podman manifest add ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest docker://${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:ppc64le
+          # podman manifest add ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest docker://${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:ppc64le
           podman manifest push ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest

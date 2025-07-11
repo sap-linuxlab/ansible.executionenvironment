@@ -46,10 +46,10 @@ dependencies:
   python: requirements.txt
   system:
     - python3.12-devel [platform:rpm compile]
-    - openssl
-    - openssl-devel
-    - libxml2
-    - libxml2-devel
+    - openssl [platform:rpm]
+    - openssl-devel [platform:rpm compile]
+    - libxml2 [platform:rpm]
+    - libxml2-devel [platform:rpm compile]
     - git-core [platform:rpm]
     - libcurl-devel [platform:rpm compile]
     - krb5-devel [platform:rpm compile]
