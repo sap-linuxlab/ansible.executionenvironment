@@ -76,35 +76,78 @@ To create a SAP EE with galaxy collections only run the following command:
 ansible-builder create -v3 [-f execution-environment.yml]
 ```
 
-This commands creates the multiarch manifest. Now build and add the execution environments:
+<!--
+Add the following line to the created Containerfile to connect to your repo, if you host on ghcr.io:
 
 ```bash
-podman manifest create sap-ee
-podman build --platform linux/amd64,linux/arm64 --manifest sap-ee context/Containerfile context
+LABEL TBD org....
+```
+-->
+
+For easier copy and paste set the variable `sap_ee_container` to the name of your final container, e.g.:
+
+```bash
+sap_ee_container='ghcr.io/sap-linuxlab/sap-ee:latest'
+```
+
+This following commands creates the multiarch manifest and cross build the execution environments:
+
+```bash
+podman manifest create ${sap_ee_container}
+podman build --platform linux/arm64 --layers=false --manifest ${sap_ee_container} --tag sap_ee_arm64 -f context/Containerfile context
+podman build --platform linux/amd64 --layers=false --manifest ${sap_ee_container} --tag sap_ee_amd64 -f context/Containerfile context
+podman build --platform linux/ppc64le --layers=false --manifest ${sap_ee_container} --tag sap_ee_ppc64le -f context/Containerfile context
 ```
 
 After building check the manifest
 
 ```bash
-podman manifest inspect sap-ee
+podman manifest inspect ${sap_ee_container} | grep arch
 ```
 
 Example Output:
 
-```text
-
+```json
+{
+    "schemaVersion": 2,
+    "mediaType": "application/vnd.oci.image.index.v1+json",
+    "manifests": [
+        {
+            "mediaType": "application/vnd.oci.image.manifest.v1+json",
+            "size": 913,
+            "digest": "sha256:35786bff9b3a96e5fa18ebd368623886d235015317ae27c7427671e5bf8da6d0",
+            "platform": {
+                "architecture": "amd64",
+                "os": "linux"
+            }
+        },
+        {
+            "mediaType": "application/vnd.oci.image.manifest.v1+json",
+            "size": 913,
+            "digest": "sha256:d485c5c2ac5ed42d5248af1274f7c04b414993c3e10ec8dc2aec899c4cab1fe6",
+            "platform": {
+                "architecture": "arm64",
+                "os": "linux"
+            }
+        }
+    ]
+}
 ```
 
-Now tag the container file and upload to the registry, e.g.
+Now login to the registry and upload to the multiarch containerfile, e.g.
 
 ```bash
-podman login ghcr.io
-podman tag localhost/sap-ee ghcr.io/sap-linuxlab/sap-ee:stable
-podman push ghcr.io/sap-linuxlab/sap-ee:stable
+podman login
+podman manifest push ${sap_ee_container}
 ```
 
 For the podman login command use your github username with a personal access token.
 
+>[!NOTE]
+> *Known Bug:* When building on Apple Silcon the images are all get the variant v8 detected in the images.
+> It's not annotated in the manifest or image, but when executing such an image you will get the error message:
+> `WARNING: image platform (linux/amd64/v8) does not match the expected platform (linux/amd64)`
+> It can be safely ignored
 
 # Changes for building supported EE for RHAAP
 

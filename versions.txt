@@ -1,0 +1,8 @@
+# This file gives an overview of the current available execution environments (tags)
+stable: n/a     -- contains well defined versions of each collection
+latest: 0.1.0   -- contains latest available verion of each collection
+weekly: n/a     -- contains latest available version + latest dev versions of sap-linuxlab collections
+
+# currently available latest version
+0.1.0 : Initial Build
+0.2.0

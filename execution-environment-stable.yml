@@ -3,7 +3,7 @@ version: 3
 images:
   base_image:
     name: quay.io/ansible/awx-ee:latest
-    # name: quay.io/centos/centos:stream9
+
 dependencies:
   ansible_core:
     package_pip: ansible-core<=2.17
@@ -18,23 +18,42 @@ dependencies:
         - src: mk-ansible-roles.setup_nfs_server
     collections:
         - name: azure.azcollection
+          version:
         - name: google.cloud
+          version:
+        - name: amazon.aws
+          version:
+        - name: community.aws
+          version:
         - name: vmware.vmware_rest
+          version:
         - name: community.vmware
           version: 3.9.0
         - name: openstack.cloud
           version: 1.8.0
+        - name: kubernetes.core
+          version:
         - name: fedora.linux_system_roles
-        - name: community.general
+          version:
         - name: ansible.posix
-        - name: git+https://github.com/sap-linuxlab/community.sap_install.git,dev
-          type: git
-        - name: git+https://github.com/sap-linuxlab/community.sap_libs.git,dev
-          type: git
-        - name: git+https://github.com/sap-linuxlab/community.sap_operations.git,dev
-          type: git
-        - name: git+https://github.com/sap-linuxlab/community.sap_launchpad.git,dev
-          type: git
+          version:
+        - name: ansible.utils
+          version:
+        - name: community.general
+          version:
+        - name: community.crypto
+          version:
+        # SAP Community Roles
+        - name: community.sap_libs
+          version:
+        - name: community.sap_operations
+          version:
+        - name: community.sap_install
+          version:
+        - name: community.sap_launchpad
+          version:
+        - name: community.sap_infrastructure
+          version:
   python: requirements.txt
   system:
     - gcc
@@ -42,6 +61,8 @@ dependencies:
     - python3.12-devel
     - openssl
     - openssl-devel
+    - libxml2
+    - libxml2-devel
 
 options:
   package_manager_path: /usr/bin/dnf

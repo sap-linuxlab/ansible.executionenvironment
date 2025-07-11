@@ -1,4 +1,16 @@
-#git+https://github.com/ansible/ansible-sign
+git+https://github.com/ansible/ansible-sign
+ncclient
+paramiko
+pykerberos
+pyOpenSSL
+pypsrp[kerberos,credssp]
+pywinrm[kerberos,credssp]
+toml
+pexpect>=4.5
+python-daemon
+pyyaml
+six
+receptorctl
 #cryptography>=37.0.1
 cryptography
 #openstacksdk>=0.36
@@ -11,8 +23,8 @@ boto3>=1.22.0
 pytz  # for schedule_rrule lookup plugin
 python-dateutil>=2.7.0  # schedule_rrule
 awxkit  # For import and export modulespackaging
-pyVmomi>=6.7
-pyVim
+#pyVmomi>=6.7
+#pyVim
 #git+https://github.com/vmware/vsphere-automation-sdk-python.git ; python_version >= '2.7'  # Python 2.6 is not supported
 #google-auth
 #google-cloud-storage
