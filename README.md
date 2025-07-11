@@ -1,3 +1,32 @@
+# Execution Enviroments
+
+This repository maintains the configuration to produce reproducible ansible execution environments, which can be used for testing, e.g with ansible-navigator or directly
+
+It is planned to create exeution environments with supported ansible versions, python versions on SUSE Leap and Centos
+
+## Requirememts
+you need a working podman installation on MacOS, or Linux x86_64.
+use
+
+## Use with ansible-navigator
+
+## Use with ansible-playbook
+
+```bash
+podman run --name sap-ee -v ${yourworkdir}:/runner:Z -ti ghcr.io/sap-linuxlab/sap-ee:stable
+ansible --version
+```
+
+## Maintained images
+
+ghcr.io/sap-linuxlab/sap-ee:stable
+
+## TODO
+
+1. add ppcle platform
+2. add suse leap as base image
+
+
 
 # Create MultiArch Build environment for consistent testing
 
@@ -31,7 +60,7 @@ The easiest way to create a build environment is to use the community ansible bu
 3. Start the build environment
 
    ```bash
-   podman run --privileged --name ansible_dev_arm -ti -v /Users/mkoch/git:/workdir ghcr.io/ansible/community-ansible-dev-tools
+   podman run --privileged --name ansible_dev_arm -ti -v ${ee_dir}:/workdir ghcr.io/ansible/community-ansible-dev-tools
    ```
 
 >[!NOTE]
