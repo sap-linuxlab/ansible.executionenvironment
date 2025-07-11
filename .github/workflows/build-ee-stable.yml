@@ -1,0 +1,83 @@
+ #.github/workflows/build-ee-latest.yml
+name: Build and Push latest Multi-Arch Execution Environment
+
+on:
+  workflow_dispatch:
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}/sap-ee
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write # for writing git-tags
+      packages: write # for pushing to registry
+    strategy:
+      fail-fast: false
+      # Matrix-Strategie, um Builds parallel auszuführen, falls Runner verfügbar sind.
+      # Hier wird jedoch auf einem einzigen Runner emuliert.
+      matrix:
+        platform:
+          - amd64
+          - arm64
+          - ppc64le
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          # Notwendig, um alle bisherigen Tags abzurufen
+          fetch-depth: 0
+
+      # Dieser Schritt ist entscheidend: Er konfiguriert QEMU und binfmt_misc auf dem Runner.
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+        with:
+          platforms: all # Stellt sicher, dass alle Architekturen emuliert werden können
+
+      # Anmeldung bei der Container Registry
+      - name: Log in to the Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      # Schritt 1: Build-Kontext mit ansible-builder erstellen
+      - name: Create build context
+        run: |
+          pip install ansible-builder
+          ansible-builder create -v 3 -f execution-environment-stable.yml
+
+      # Schritt 2: Image für die jeweilige Plattform bauen und pushen
+      # Das Image wird direkt mit einem architektur-spezifischen Tag gepusht.
+      - name: Build and push platform-specific image
+        run: |
+          podman build \
+            --platform=linux/${{ matrix.platform }} \
+            --tag ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ matrix.platform }} \
+            --layers=false \
+            -f context/Containerfile context
+          podman push ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ matrix.platform }}
+
+  # Ein separater Job, der nach Abschluss aller plattform-spezifischen Builds läuft.
+  create-manifest:
+    runs-on: ubuntu-latest
+    needs: build # Stellt sicher, dass dieser Job erst nach dem 'build'-Job startet
+    steps:
+      - name: Log in to the Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      # Erstellt die Manifest-Liste und fügt die zuvor gepushten Images hinzu.
+      - name: Create and push manifest list
+        run: |
+          podman manifest create ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
+          podman manifest add ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest docker://${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:amd64
+          podman manifest add ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest docker://${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:arm64
+          podman manifest add ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest docker://${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:ppc64le
+          podman manifest push ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
