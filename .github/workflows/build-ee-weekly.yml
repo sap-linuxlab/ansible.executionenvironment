@@ -2,9 +2,9 @@
 name: Build and Push latest Multi-Arch Execution Environment
 
 on:
-  push:
-    branches: [ "main" ]
   workflow_dispatch:
+  # schedule:
+  #  - cron: '15 3 * * 0' # Runs at 3:15 AM UTC on Sunday
 
 env:
   REGISTRY: ghcr.io
@@ -24,8 +24,14 @@ jobs:
         platform:
           - amd64
           - arm64
-          # ppc64le
+          - ppc64le
     steps:
+      # get current date and use as tag
+      - name: Get current date for tagging
+        id: date
+        run: echo "DATE_TAG=$(date +'%y%m%d')" >> $GITHUB_ENV
+
+      # Checkout repo
       - name: Checkout repository
         uses: actions/checkout@v4
 
@@ -47,7 +53,7 @@ jobs:
       - name: Create build context
         run: |
           pip install ansible-builder
-          ansible-builder create -v 3
+          ansible-builder create -v 3 -f execution-environment-weekly.yml
 
       # Schritt 2: Image für die jeweilige Plattform bauen und pushen
       # Das Image wird direkt mit einem architektur-spezifischen Tag gepusht.
@@ -55,16 +61,21 @@ jobs:
         run: |
           podman build \
             --platform=linux/${{ matrix.platform }} \
-            --tag ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ matrix.platform }} \
+            --tag ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.DATE_TAG }}_${{ matrix.platform }} \
             --layers=false \
             -f context/Containerfile context
-          podman push ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ matrix.platform }}
+          podman push ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.DATE_TAG }}_${{ matrix.platform }}
 
   # Ein separater Job, der nach Abschluss aller plattform-spezifischen Builds läuft.
   create-manifest:
     runs-on: ubuntu-latest
     needs: build # Stellt sicher, dass dieser Job erst nach dem 'build'-Job startet
     steps:
+      # get current date and use as tag
+      - name: Get current date for tagging
+        id: date
+        run: echo "DATE_TAG=$(date +'%y%m%d')" >> $GITHUB_ENV
+
       - name: Log in to the Container Registry
         uses: docker/login-action@v3
         with:
@@ -75,8 +86,8 @@ jobs:
       # Erstellt die Manifest-Liste und fügt die zuvor gepushten Images hinzu.
       - name: Create and push manifest list
         run: |
-          podman manifest create ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
-          podman manifest add ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest docker://${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:amd64
-          podman manifest add ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest docker://${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:arm64
-          # podman manifest add ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest docker://${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:ppc64le
-          podman manifest push ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
+          podman manifest create ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.DATE_TAG }}
+          podman manifest add ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.DATE_TAG }} docker://${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.DATE_TAG }}_amd64
+          podman manifest add ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.DATE_TAG }} docker://${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.DATE_TAG }}_arm64
+          podman manifest add ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.DATE_TAG }} docker://${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.DATE_TAG }}_ppc64le
+          podman manifest push ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.DATE_TAG }}

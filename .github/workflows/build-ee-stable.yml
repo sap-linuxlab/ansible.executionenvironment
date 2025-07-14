@@ -2,8 +2,6 @@
 name: Build and Push latest Multi-Arch Execution Environment
 
 on:
-  push:
-    branches: [ "main" ]
   workflow_dispatch:
 
 env:
@@ -14,8 +12,8 @@ jobs:
   build:
     runs-on: ubuntu-latest
     permissions:
-      contents: read
-      packages: write
+      contents: write # for writing git-tags
+      packages: write # for pushing to registry
     strategy:
       fail-fast: false
       # Matrix-Strategie, um Builds parallel auszuführen, falls Runner verfügbar sind.
@@ -24,10 +22,13 @@ jobs:
         platform:
           - amd64
           - arm64
-          # ppc64le
+          - ppc64le
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          # Notwendig, um alle bisherigen Tags abzurufen
+          fetch-depth: 0
 
       # Dieser Schritt ist entscheidend: Er konfiguriert QEMU und binfmt_misc auf dem Runner.
       - name: Set up QEMU
@@ -47,7 +48,7 @@ jobs:
       - name: Create build context
         run: |
           pip install ansible-builder
-          ansible-builder create -v 3
+          ansible-builder create -v 3 -f execution-environment-stable.yml
 
       # Schritt 2: Image für die jeweilige Plattform bauen und pushen
       # Das Image wird direkt mit einem architektur-spezifischen Tag gepusht.
@@ -78,5 +79,5 @@ jobs:
           podman manifest create ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
           podman manifest add ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest docker://${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:amd64
           podman manifest add ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest docker://${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:arm64
-          # podman manifest add ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest docker://${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:ppc64le
+          podman manifest add ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest docker://${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:ppc64le
           podman manifest push ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
