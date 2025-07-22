@@ -2,13 +2,13 @@
 name: Build and Push latest Multi-Arch Execution Environment
 
 on:
-  push:
-    branches: [ "main" ]
+  #push:
+  #  branches: [ "main" ]
   workflow_dispatch:
 
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: ${{ github.repository }}/sap-ee
+  IMAGE_NAME: ${{ github.repository_owner }}/sap-ee
 
 jobs:
   build:
@@ -26,6 +26,8 @@ jobs:
           - arm64
           # ppc64le
     steps:
+      - name: Dump GitHub context
+        run: echo "${{ toJSON(github) }}"
       - name: Checkout repository
         uses: actions/checkout@v4
 
