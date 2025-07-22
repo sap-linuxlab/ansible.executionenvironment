@@ -66,12 +66,21 @@ dependencies:
     - gcc [platform:rpm compile]
     - gcc-c++ [platform:rpm compile]
     - make [platform:rpm compile]
+    - cmake [platform:rpm compile]
+    - clang [platform:rpm compile]
     - openssl-devel [platform:rpm compile]
+    # binutils [platform:rpm compile]
+    # glibc-devel [platform:rpm compile]
+    # pkgconf [platform:rpm compile]
+    # pkgconf-pkg-config [platform:rpm compile]
+    # pkgconf-m4 [platform:rpm compile]
 
 options:
   package_manager_path: /usr/bin/dnf
 
 additional_build_steps:
+  #prepend_builder:
+  #  - RUN ln -s /usr/bin/gcc /usr/bin/cc  
   prepend_base:
     - RUN dnf update -y
   append_base:
