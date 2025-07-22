@@ -1,5 +1,5 @@
  #.github/workflows/build-ee-latest.yml
-name: Build and Push latest Multi-Arch Execution Environment
+name: Build and Push weekly Multi-Arch Execution Environment
 
 on:
   workflow_dispatch:
@@ -24,7 +24,7 @@ jobs:
         platform:
           - amd64
           - arm64
-          - ppc64le
+          #- ppc64le
     steps:
       # get current date and use as tag
       - name: Get current date for tagging
