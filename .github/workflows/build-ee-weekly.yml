@@ -90,8 +90,8 @@ jobs:
           podman manifest add ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ needs.generate-tag.outputs.image_tag }} docker://${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ needs.generate-tag.outputs.image_tag }}_arm64
           # podman manifest add ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ needs.generate-tag.outputs.image_tag }} docker://${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ needs.generate-tag.outputs.image_tag }}_ppc64le
           podman manifest push ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ needs.generate-tag.outputs.image_tag }}
-          podman tag  ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ needs.generate-tag.outputs.image_tag }}  ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest-dev
-          podman push  ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest-dev
+          podman manifest tag  ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ needs.generate-tag.outputs.image_tag }}  ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest-dev
+          podman manifest push  ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest-dev
 
   cleanup:
     runs-on: ubuntu-latest
