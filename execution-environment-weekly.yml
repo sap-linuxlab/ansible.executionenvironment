@@ -89,7 +89,7 @@ additional_build_steps:
   #prepend_builder:
   #  - RUN ln -s /usr/bin/gcc /usr/bin/cc
   prepend_base:
-    - RUN dnf update -y && dnf install git
+    - RUN dnf update -y && dnf install -y git
   append_base:
     - RUN $PYCMD -m pip install -U pip
   append_final:
