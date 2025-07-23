@@ -90,24 +90,5 @@ jobs:
           podman manifest add ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ needs.generate-tag.outputs.image_tag }} docker://${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ needs.generate-tag.outputs.image_tag }}_arm64
           # podman manifest add ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ needs.generate-tag.outputs.image_tag }} docker://${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ needs.generate-tag.outputs.image_tag }}_ppc64le
           podman manifest push ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ needs.generate-tag.outputs.image_tag }}
-          podman tag  ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ needs.generate-tag.outputs.image_tag }}  ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest-dev
+          podman tag ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ needs.generate-tag.outputs.image_tag }}  ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest-dev
           podman manifest push  ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest-dev
-
-  cleanup:
-    runs-on: ubuntu-latest
-    needs: create-manifest
-    permissions:
-      contents: read
-      packages: write
-    steps:
-      # Caution may have issues with multiarch images - see https://github.com/snok/container-retention-policy?tab=readme-ov-file#examples
-      - name: Delete old sap-ee container images
-        uses: snok/container-retention-policy@v3.0.0
-        with:
-          account: ${{ github.actor}}
-          token: ${{ secrets.GITHUB_TOKEN }}
-          image-names: sap-ee
-          image-tags: "dev*"
-          cut-off: 6w
-          keep-n-most-recent: 5
-          dry-run: true

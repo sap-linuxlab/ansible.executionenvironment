@@ -1,0 +1,27 @@
+name: Cleanup Old SAP-EE Containers
+# currently does not work due to GITHUB TOKEN not support in api.github.com
+on:
+  # Erlaube manuelles Starten über die GitHub UI
+  workflow_dispatch:
+  # Führe den Job wöchentlich aus (Sonntags um 3 Uhr morgens)
+  #schedule:
+  #  - cron: '0 3 * * 0'
+
+jobs:
+  cleanup:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      # Caution may have issues with multiarch images - see https://github.com/snok/container-retention-policy?tab=readme-ov-file#examples
+      - name: Delete old sap-ee container images
+        uses: snok/container-retention-policy@v3.0.0
+        with:
+          account: ${{ github.actor}}
+          token: ${{ secrets.GITHUB_TOKEN }}
+          image-names: sap-ee
+          image-tags: "dev*"
+          cut-off: 6w
+          keep-n-most-recent: 5
+          dry-run: true
