@@ -1,50 +1,70 @@
-# Execution Enviroments
-
-This repository maintains the configuration to produce reproducible ansible execution environments, which can be used for testing, e.g with ansible-navigator or directly
+# Execution
 
 [![Centos9 latest Execution Environment](https://github.com/sap-linuxlab/ansible.executionenvironment/actions/workflows/build-ee-latest.yml/badge.svg)](https://github.com/sap-linuxlab/ansible.executionenvironment/actions/workflows/build-ee-latest.yml)
+[![Centos 9 weekky Execution Environment](https://github.com/sap-linuxlab/ansible.executionenvironment/actions/workflows/build-ee-weekly.yml/badge.svg)](https://github.com/sap-linuxlab/ansible.executionenvironment/actions/workflows/build-ee-weekly.yml)
 
+
+## Overview
+
+The goal of this repository is to create and maintain execution environments for all supported platforms for the community collections. The resulting contaners can be used for consistant development and testing.
+This repository should also help to provide recipes to create containers that can be used and maintained by your e.g. in production.
 It is planned to create exeution environments with supported ansible versions, python versions on SUSE Leap and Centos
 
 ## Requirememts
+
 you need a working podman installation on MacOS, or Linux x86_64.
-use
 
 ## Use with ansible-navigator
+Create the file `${HOME}/.ansible-navigator.yml` as a default or a `file ansible-navigator.yml` in the root directory of your project with the following content (adapt to your needs):
 
-## Use with ansible-playbook
+```[yaml]
+---
+ansible-navigator:
+  execution-environment:
+    container-engine: podman
+    # Passe diesen Pfad zu deinem Container-Image an
+    image: ghcr.io/your-org/sap-ee:latest
+    pull:
+      # Lädt das Image nur herunter, wenn es lokal nicht vorhanden ist
+      policy: missing
+    # next lines are optional to pass variable directory
+    volume-mounts:
+      - src: "./vars"       # directory on host-system
+        dest: "/vars"       # target directory in container
+```
+
+ansible-navigator will pick this file on the next execution and automatically runs the playbook in this container
+
+## Use with ansible-playbook directly
 
 ```bash
-podman run --name sap-ee -v ${yourworkdir}:/runner:Z -ti ghcr.io/sap-linuxlab/sap-ee:stable
+podman run --name sap-ee -v ${yourworkdir}:/runner:Z -ti ghcr.io/sap-linuxlab/sap-ee:latest
 ansible --version
 ```
 
 ## Maintained images
 
-ghcr.io/sap-linuxlab/sap-ee:stable
+The execution environments are multi-arch images build for arm64 and amd64 archtectures. (ppc64le is planned)
+
+- ghcr.io/sap-linuxlab/sap-ee:latest        contains the latest collections as published on galaxy.ansible.com
+- ghcr.io/sap-linuxlab/sap-ee:latest-dev    contains latest sap collections from sap-linuxlab dev-branch and other latest published collections from galaxy.ansible.com
+
+All other execution environments are tagged with `[dev]YYMMDD`. For a complete list see [github packages](https://github.com/sap-linuxlab/ansible.executionenvironment/pkgs/container/sap-ee)
 
 ## TODO
 
 1. add ppcle platform
 2. add suse leap as base image
 
+## Build your own customized MultiArch Build environment for consistent testing
 
-
-# Create MultiArch Build environment for consistent testing
-
-## Overview
-
-The goal of this repository is to create execution environments for all supported platforms for the community collections.
-The resulting contaners can the be used for development and testing.
-This repository should help to provide recipe to create containers that can be used in production.
-
-## Requirements
-
-To create your execution environment you need a working podman installation on you rbuild host.
+If you just want to use the maintained execution environments you can stop reading here.
+Continue reading if you want to create your own customized execution environments.
 
 ## Run your development container
 
 The easiest way to create a build environment is to use the community ansible build environment.
+If you do not want to use that, feel free to create your own build environment.
 
 1. Clone this repository to your local filesystem
 
@@ -62,7 +82,7 @@ The easiest way to create a build environment is to use the community ansible bu
 3. Start the build environment
 
    ```bash
-   podman run --privileged --name ansible_dev_arm -ti -v ${ee_dir}:/workdir ghcr.io/ansible/community-ansible-dev-tools
+   podman run --privileged --name ansible_dev -ti -v ${ee_dir}:/workdir ghcr.io/ansible/community-ansible-dev-tools
    ```
 
 >[!NOTE]
@@ -79,7 +99,7 @@ ansible-builder create -v3 [-f execution-environment.yml]
 ```
 
 <!--
-Add the following line to the created Containerfile to connect to your repo, if you host on ghcr.io:
+Add the following line to the created Containerfile to connect to your repo, if you host on ghcr.io and do not create the image in a workflow:
 
 ```bash
 LABEL TBD org....
@@ -163,14 +183,3 @@ ansible-builder build -v 3 \
   --build-arg ANSIBLE_GALAXY_SERVER_RH_CERTIFIED_REPO_TOKEN \
   -f execution-environment-rh.yml
 ```
-
-
-> [!NOTE]
-> the power base image awx-ee is not available publically. The RHEL version needs extra packages
-
-# TODO
-
-- create containers based on centos-stream base image and suse-leap
-- create ppcle64 version in multiarch
-- create pipeline jobs to create weekly, and stable on demand
-  (when version list is updated on push)
