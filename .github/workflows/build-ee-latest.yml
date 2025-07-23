@@ -2,8 +2,8 @@
 name: Build and Push latest Multi-Arch Execution Environment
 
 on:
-  #push:
-  #  branches: [ "main" ]
+  push:
+    branches: [ "main" ]
   workflow_dispatch:
 
 env:

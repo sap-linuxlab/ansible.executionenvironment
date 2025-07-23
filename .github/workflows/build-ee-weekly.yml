@@ -8,7 +8,7 @@ on:
 
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: ${{ github.repository_owner }}/sap-ee-dev
+  IMAGE_NAME: ${{ github.repository }}/sap-ee-dev
 
 jobs:
   build:
