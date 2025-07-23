@@ -73,7 +73,7 @@ jobs:
   # Ein separater Job, der nach Abschluss aller plattform-spezifischen Builds läuft.
   create-manifest:
     runs-on: ubuntu-latest
-    needs: build # Stellt sicher, dass dieser Job erst nach dem 'build'-Job startet
+    needs: [ generate-tag, build ] # Stellt sicher, dass dieser Job erst nach dem 'build'-Job startet und den output von generate-tag  hat
     steps:
       - name: Log in to the Container Registry
         uses: docker/login-action@v3
