@@ -2,6 +2,8 @@
 
 This repository maintains the configuration to produce reproducible ansible execution environments, which can be used for testing, e.g with ansible-navigator or directly
 
+[![Centos9 latest Execution Environment](https://github.com/sap-linuxlab/ansible.executionenvironment/actions/workflows/build-ee-latest.yml/badge.svg)](https://github.com/sap-linuxlab/ansible.executionenvironment/actions/workflows/build-ee-latest.yml)
+
 It is planned to create exeution environments with supported ansible versions, python versions on SUSE Leap and Centos
 
 ## Requirememts
