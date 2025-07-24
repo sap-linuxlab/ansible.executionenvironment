@@ -1,7 +1,9 @@
-# Execution
+# Ansible Execution Environments for SAP LinuxLab Collections
 
 [![Centos9 latest Execution Environment](https://github.com/sap-linuxlab/ansible.executionenvironment/actions/workflows/build-ee-latest.yml/badge.svg)](https://github.com/sap-linuxlab/ansible.executionenvironment/actions/workflows/build-ee-latest.yml)
+
 [![Centos 9 weekky Execution Environment](https://github.com/sap-linuxlab/ansible.executionenvironment/actions/workflows/build-ee-weekly.yml/badge.svg)](https://github.com/sap-linuxlab/ansible.executionenvironment/actions/workflows/build-ee-weekly.yml)
+
 [![Centos 9 weekky Execution Environment](https://github.com/sap-linuxlab/ansible.executionenvironment/actions/workflows/build-ee-stable.yml/badge.svg)](https://github.com/sap-linuxlab/ansible.executionenvironment/actions/workflows/build-ee-stable.yml)
 
 ## Overview
@@ -15,6 +17,7 @@ It is planned to create exeution environments with supported ansible versions, p
 you need a working podman installation on MacOS, or Linux x86_64.
 
 ## Use with ansible-navigator
+
 Create the file `${HOME}/.ansible-navigator.yml` as a default or a `file ansible-navigator.yml` in the root directory of your project with the following content (adapt to your needs):
 
 ```[yaml]
