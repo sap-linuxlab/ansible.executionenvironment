@@ -93,4 +93,4 @@ All Images use:
 2. add suse leap as base image
 
 You can use the execution_environment*.yml files to create your own execution environments
-Read [the developer docuemntion](DEVELOPER.md) for details
+Read [the developer documentation](DEVELOPER.md) for details
