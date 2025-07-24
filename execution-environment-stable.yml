@@ -29,9 +29,9 @@ dependencies:
         - name: community.aws
           version: 10.0.0
         - name: vmware.vmware_rest
-          version: 4.8.2
+          version: 4.8.1
         - name: community.vmware
-          version: 3.9.0 # 5.7.1
+          version: 5.7.1
         - name: openstack.cloud
           version: 1.8.0 # 2.4.1
         - name: kubernetes.core
