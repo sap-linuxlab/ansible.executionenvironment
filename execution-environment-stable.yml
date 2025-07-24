@@ -2,11 +2,12 @@ version: 3
 
 images:
   base_image:
-    name: quay.io/ansible/awx-ee:latest
+    #name: quay.io/ansible/awx-ee:latest
+    name: quay.io/centos/centos:stream9
 
 dependencies:
   ansible_core:
-    package_pip: ansible-core<=2.17
+    package_pip: ansible-core<2.18
   ansible_runner:
     package_pip: ansible-runner
   python_interpreter:
@@ -60,21 +61,49 @@ dependencies:
           version: 1.2.1
         - name: community.sap_infrastructure
           version: 1.1.3
+
   python: requirements.txt
   system:
-    - gcc
-    - gcc-c++
-    - python3.12-devel
-    - openssl
-    - openssl-devel
-    - libxml2
-    - libxml2-devel
+    - python3.12-devel [platform:rpm compile]
+    - openssl [platform:rpm]
+    - openssl-devel [platform:rpm compile]
+    - libxml2 [platform:rpm]
+    - libxml2-devel [platform:rpm compile]
+    - git-core [platform:rpm]
+    - libcurl-devel [platform:rpm compile]
+    - krb5-devel [platform:rpm compile]
+    - krb5-workstation [platform:rpm]
+    - subversion [platform:rpm]
+    - subversion [platform:dpkg]
+    - git-lfs [platform:rpm]
+    - sshpass [platform:rpm]
+    - rsync [platform:rpm]
+    - epel-release [platform:rpm]
+    - unzip [platform:rpm]
+    - podman-remote [platform:rpm]
+    - cmake [platform:rpm compile]
+    - gcc [platform:rpm compile]
+    - gcc-c++ [platform:rpm compile]
+    - make [platform:rpm compile]
+    - cmake [platform:rpm compile]
+    - clang [platform:rpm compile]
+    - openssl-devel [platform:rpm compile]
+    # binutils [platform:rpm compile]
+    # glibc-devel [platform:rpm compile]
+    # pkgconf [platform:rpm compile]
+    # pkgconf-pkg-config [platform:rpm compile]
+    # pkgconf-m4 [platform:rpm compile]
 
 options:
   package_manager_path: /usr/bin/dnf
 
 additional_build_steps:
+  #prepend_builder:
+  #  - RUN ln -s /usr/bin/gcc /usr/bin/cc
   prepend_base:
     - RUN dnf update -y
+  append_base:
+    - RUN $PYCMD -m pip install -U pip
   append_final:
     - RUN dnf clean all
+    - RUN alternatives --install /usr/bin/python python /usr/bin/python3.12 312

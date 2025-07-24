@@ -2,7 +2,7 @@
 
 [![Centos9 latest Execution Environment](https://github.com/sap-linuxlab/ansible.executionenvironment/actions/workflows/build-ee-latest.yml/badge.svg)](https://github.com/sap-linuxlab/ansible.executionenvironment/actions/workflows/build-ee-latest.yml)
 [![Centos 9 weekky Execution Environment](https://github.com/sap-linuxlab/ansible.executionenvironment/actions/workflows/build-ee-weekly.yml/badge.svg)](https://github.com/sap-linuxlab/ansible.executionenvironment/actions/workflows/build-ee-weekly.yml)
-
+[![Centos 9 weekky Execution Environment](https://github.com/sap-linuxlab/ansible.executionenvironment/actions/workflows/build-ee-stable.yml/badge.svg)](https://github.com/sap-linuxlab/ansible.executionenvironment/actions/workflows/build-ee-stable.yml)
 
 ## Overview
 
@@ -48,8 +48,36 @@ The execution environments are multi-arch images build for arm64 and amd64 archt
 
 - ghcr.io/sap-linuxlab/sap-ee:latest        contains the latest collections as published on galaxy.ansible.com
 - ghcr.io/sap-linuxlab/sap-ee:latest-dev    contains latest sap collections from sap-linuxlab dev-branch and other latest published collections from galaxy.ansible.com
+- ghcr.io/sap-linuxlab/sap-ee:stable        contains well defined collection versions
 
 All other execution environments are tagged with `[dev]YYMMDD`. For a complete list see [github packages](https://github.com/sap-linuxlab/ansible.executionenvironment/pkgs/container/sap-ee)
+
+The following table contains the list of collections in sap-ee with the according tag.
+(latest means latest version from galaxy, dev means current upstream github dev tree)
+
+Collection                   | stable  | latest | latest-dev
+-----------------------------|---------|--------|------------
+awx.awx                      |  24.6.1 | latest | latest
+azure.azcollection           |   3.6.0 | latest | latest
+google.cloud                 |   1.6.0 | latest | latest
+amazon.aws                   |  10.1.0 | latest | latest
+community.aws                |  10.0.0 | latest | latest
+vmware.vmware_rest           |   4.8.2 | latest | latest
+community.vmware             |   3.9.0 | latest | latest
+openstack.cloud              |   1.8.0 | latest | latest
+kubernetes.core              |   6.0.0 | latest | latest
+kubevirt.core                |   2.2.3 | latest | latest
+ovirt.ovirt                  |   3.2.1 | latest | latest
+fedora.linux_system_roles    | 1.106.0 | latest | latest
+ansible.posix                |   2.0.0 | latest | latest
+ansible.utils                |   6.0.0 | latest | latest
+community.general            |  11.0.0 | latest | latest
+community.crypto             |   3.0.0 | latest | latest
+community.sap_libs           |   1.4.2 | latest | dev
+community.sap_operations     |   1.0.0 | latest | dev
+community.sap_install        |   1.6.0 | latest | dev
+community.sap_launchpad      |   1.2.1 | latest | dev
+community.sap_infrastructure |   1.1.3 | latest | dev
 
 ## TODO
 

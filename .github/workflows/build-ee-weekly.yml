@@ -1,10 +1,10 @@
- #.github/workflows/build-ee-latest.yml
+ #.github/workflows/build-ee-weekly.yml
 name: Build and Push weekly Multi-Arch Execution Environment
 
 on:
   workflow_dispatch:
-  # schedule:
-  #  - cron: '15 3 * * 0' # Runs at 3:15 AM UTC on Sunday
+  schedule:
+   - cron: '15 3 * * 0' # Runs at 3:15 AM UTC on Sunday
 
 env:
   REGISTRY: ghcr.io
