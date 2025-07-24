@@ -62,8 +62,8 @@ azure.azcollection           |   3.6.0 | latest | latest
 google.cloud                 |   1.6.0 | latest | latest
 amazon.aws                   |  10.1.0 | latest | latest
 community.aws                |  10.0.0 | latest | latest
-vmware.vmware_rest           |   4.8.2 | latest | latest
-community.vmware             |   3.9.0 | latest | latest
+vmware.vmware_rest           |   4.8.1 | latest | latest
+community.vmware             |   5.7.1 | latest | latest
 openstack.cloud              |   1.8.0 | latest | latest
 kubernetes.core              |   6.0.0 | latest | latest
 kubevirt.core                |   2.2.3 | latest | latest
@@ -78,6 +78,11 @@ community.sap_operations     |   1.0.0 | latest | dev
 community.sap_install        |   1.6.0 | latest | dev
 community.sap_launchpad      |   1.2.1 | latest | dev
 community.sap_infrastructure |   1.1.3 | latest | dev
+
+All Images use:
+
+- python 3.12.x
+- ansible-core 2.17.x
 
 ## TODO
 
