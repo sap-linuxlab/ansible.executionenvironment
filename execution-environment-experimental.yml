@@ -24,6 +24,7 @@ dependencies:
           version: 3.9.0
         - name: openstack.cloud
           version: 1.8.0
+        - name: ibm.power_hmc
         - name: fedora.linux_system_roles
         - name: community.general
         - name: ansible.posix

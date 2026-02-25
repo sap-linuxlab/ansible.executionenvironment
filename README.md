@@ -10,7 +10,7 @@
 
 The goal of this repository is to create and maintain execution environments for all supported platforms for the community collections. The resulting contaners can be used for consistant development and testing.
 This repository should also help to provide recipes to create containers that can be used and maintained by your e.g. in production.
-It is planned to create exeution environments with supported ansible versions, python versions on SUSE Leap and Centos
+It is planned to create execution environments with supported ansible versions, python versions on SUSE Leap and Centos
 
 ## Requirememts
 
@@ -92,5 +92,5 @@ All Images use:
 1. add ppcle platform
 2. add suse leap as base image
 
-You can use the execution_environment*.yml files to create your own execution environments
+You can use the `execution_environment*.yml` files as a basis to create your own execution environments.
 Read [the developer documentation](DEVELOPER.md) for details
