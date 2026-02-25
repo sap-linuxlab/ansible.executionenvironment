@@ -37,6 +37,8 @@ dependencies:
         - name: ansible.utils
         - name: community.general
         - name: community.crypto
+        - name: ibm.power_hmc
+          version: ">=1.0.0"
         # SAP Community Roles
                 # SAP Community Roles
         - name: git+https://github.com/sap-linuxlab/community.sap_libs.git,dev
