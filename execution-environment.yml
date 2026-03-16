@@ -37,6 +37,8 @@ dependencies:
         - name: ansible.utils
         - name: community.general
         - name: community.crypto
+        - name: ibm.power_hmc
+          version: ">=1.0.0"
         # SAP Community Roles
         - name: community.sap_libs
         - name: community.sap_operations
