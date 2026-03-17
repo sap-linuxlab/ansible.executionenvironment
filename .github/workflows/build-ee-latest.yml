@@ -15,7 +15,7 @@ jobs:
   generate-tag:
     runs-on: ubuntu-latest
     outputs:
-      image_tag: ${{ steps.date.outputs.tag}}
+      image_tag: ${{ steps.date.outputs.tag }}
     steps:
       - name: Get current date for image tag
         id: date
@@ -37,7 +37,9 @@ jobs:
           # ppc64le
     steps:
       - name: Dump GitHub context
-        run: echo "${{ toJSON(github) }}"
+        env:
+          GITHUB_CONTEXT: ${{ toJSON(github) }}
+        run: printf '%s\n' "$GITHUB_CONTEXT"
       - name: Checkout repository
         uses: actions/checkout@v4
 

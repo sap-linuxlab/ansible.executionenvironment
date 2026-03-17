@@ -46,7 +46,7 @@ dependencies:
   python: requirements.txt
   system:
     - python3.12-devel [platform:rpm compile]
-    - openssl [platform:rpm]
+    - openssl [platform:rpm compile]
     - openssl-devel [platform:rpm compile]
     - libxml2 [platform:rpm]
     - libxml2-devel [platform:rpm compile]
@@ -66,9 +66,7 @@ dependencies:
     - gcc [platform:rpm compile]
     - gcc-c++ [platform:rpm compile]
     - make [platform:rpm compile]
-    - cmake [platform:rpm compile]
     - clang [platform:rpm compile]
-    - openssl-devel [platform:rpm compile]
     # binutils [platform:rpm compile]
     # glibc-devel [platform:rpm compile]
     # pkgconf [platform:rpm compile]
