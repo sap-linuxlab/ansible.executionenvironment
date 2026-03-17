@@ -5,9 +5,9 @@ name: Cleanup Old SAP-EE Containers
 on:
   # Erlaube manuelles Starten über die GitHub UI
   workflow_dispatch:
-  # Führe den Job wöchentlich aus (Sonntags um 3 Uhr morgens)
-  #schedule:
-  #  - cron: '0 3 * * 0'
+  # Einmal pro Monat (am 1. des Monats um 3:00 UTC)
+  schedule:
+    - cron: '0 3 1 * *'
 
 jobs:
   cleanup:
@@ -28,4 +28,4 @@ jobs:
           image-tags: "dev*"
           cut-off: 6w
           keep-n-most-recent: 5
-          dry-run: true
+          dry-run: false
