@@ -61,26 +61,27 @@ The following table contains the list of collections in sap-ee with the accordin
 Collection                   | stable  | latest | latest-dev
 -----------------------------|---------|--------|------------
 awx.awx                      |  24.6.1 | latest | latest
-azure.azcollection           |   3.6.0 | latest | latest
-google.cloud                 |   1.6.0 | latest | latest
-amazon.aws                   |  10.1.0 | latest | latest
-community.aws                |  10.0.0 | latest | latest
-vmware.vmware_rest           |   4.8.1 | latest | latest
-community.vmware             |   5.7.1 | latest | latest
-openstack.cloud              |   1.8.0 | latest | latest
-kubernetes.core              |   6.0.0 | latest | latest
+azure.azcollection           |  3.15.0 | latest | latest
+google.cloud                 |  1.12.0 | latest | latest
+amazon.aws                   |  11.1.0 | latest | latest
+community.aws                |  11.0.0 | latest | latest
+vmware.vmware_rest           |  4.10.0 | latest | latest
+community.vmware             |   6.2.0 | latest | latest
+openstack.cloud              |   2.5.0 | latest | latest
+ibm.power_hmc                |  1.14.0 | latest | latest
+kubernetes.core              |   6.3.0 | latest | latest
 kubevirt.core                |   2.2.3 | latest | latest
-ovirt.ovirt                  |   3.2.1 | latest | latest
-fedora.linux_system_roles    | 1.106.0 | latest | latest
-ansible.posix                |   2.0.0 | latest | latest
-ansible.utils                |   6.0.0 | latest | latest
-community.general            |  11.0.0 | latest | latest
-community.crypto             |   3.0.0 | latest | latest
-community.sap_libs           |   1.4.2 | latest | dev
-community.sap_operations     |   1.0.0 | latest | dev
-community.sap_install        |   1.6.0 | latest | dev
-community.sap_launchpad      |   1.2.1 | latest | dev
-community.sap_infrastructure |   1.1.3 | latest | dev
+ovirt.ovirt                  |   3.2.2 | latest | latest
+fedora.linux_system_roles    | 1.121.0 | latest | latest
+ansible.posix                |   2.1.0 | latest | latest
+ansible.utils                |   6.0.1 | latest | latest
+community.general            |  11.4.5 | latest | latest
+community.crypto             |   3.1.1 | latest | latest
+community.sap_libs           |   1.7.0 | latest | dev
+community.sap_operations     |   2.0.0 | latest | dev
+community.sap_install        |   1.9.0 | latest | dev
+community.sap_launchpad      |   1.3.1 | latest | dev
+community.sap_infrastructure |   1.3.1 | latest | dev
 
 All Images use:
 
