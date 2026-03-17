@@ -26,9 +26,7 @@ dependencies:
         - name: community.aws
         - name: vmware.vmware_rest
         - name: community.vmware
-          #version: 3.9.0
         - name: openstack.cloud
-          #version: 1.8.0
         - name: kubernetes.core
         - name: kubevirt.core
         - name: ovirt.ovirt
@@ -82,7 +80,7 @@ options:
 
 additional_build_steps:
   #prepend_builder:
-  #  - RUN ln -s /usr/bin/gcc /usr/bin/cc  
+  #  - RUN ln -s /usr/bin/gcc /usr/bin/cc
   prepend_base:
     - RUN dnf update -y
   append_base:

@@ -11,5 +11,5 @@ fi
 
 # Extract collection names from requirements.yml and process each one
 grep -E "^\s*-\s*name:\s*" requirements.yml | sed 's/.*name:\s*//' | while read -r collection; do
-    ansible-galaxy collection list "$collection" 2>/dev/null | grep -E "^$collection\s+" | head -n 1 || echo "$collection: Not installed or not found"
+    ansible-galaxy collection list "$collection" 2>/dev/null | grep -E "^$collection\s+" | sort -n | tail -n 1|| echo "$collection: Not installed or not found"
 done
