@@ -41,17 +41,17 @@ jobs:
           GITHUB_CONTEXT: ${{ toJSON(github) }}
         run: printf '%s\n' "$GITHUB_CONTEXT"
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       # Dieser Schritt ist entscheidend: Er konfiguriert QEMU und binfmt_misc auf dem Runner.
       - name: Set up QEMU
-        uses: docker/setup-qemu-action@v3
+        uses: docker/setup-qemu-action@v4
         with:
           platforms: all # Stellt sicher, dass alle Architekturen emuliert werden können
 
       # Anmeldung bei der Container Registry
       - name: Log in to the Container Registry
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           registry: ${{ env.REGISTRY }}
           username: ${{ github.actor }}
@@ -80,7 +80,7 @@ jobs:
     needs: [ generate-tag, build ] # Stellt sicher, dass dieser Job erst nach dem 'build'-Job startet
     steps:
       - name: Log in to the Container Registry
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           registry: ${{ env.REGISTRY }}
           username: ${{ github.actor }}
