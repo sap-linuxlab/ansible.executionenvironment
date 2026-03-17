@@ -108,6 +108,28 @@ For the podman login command use your github username with a personal access tok
 > `WARNING: image platform (linux/amd64/v8) does not match the expected platform (linux/amd64)`
 > It can be safely ignored
 
+## Cleanup-Workflow (GHCR)
+
+Der Workflow `.github/workflows/cleanup-old-containers.yml` löscht alte Container-Images (z. B. `sap-ee:dev*`) aus dem GitHub Container Registry der Organisation. Mit dem temporären `GITHUB_TOKEN` tritt der Fehler „missing field `id`“ auf; es wird ein **klassischer Personal Access Token (PAT)** benötigt.
+
+### Token anlegen (einmalig)
+
+1. **PAT erstellen** (als Benutzer mit Schreibrechten auf die Packages der Organisation):
+   - GitHub → dein Profil (oben rechts) → **Settings** → **Developer settings** → **Personal access tokens** → **Tokens (classic)** → **Generate new token (classic)**.
+   - Scopes: **`read:packages`** und **`delete:packages`** anhaken.
+   - Unter „Organization access“ die gewünschte Organisation (z. B. `sap-linuxlab`) auf **Grant** setzen, damit der Token auf die Org-Packages zugreifen darf.
+   - Token erzeugen und den Wert sicher kopieren (nur einmal sichtbar).
+
+2. **Secret im Repository oder in der Organisation ablegen:**
+   - **Variante A – nur dieses Repo:** Repository → **Settings** → **Secrets and variables** → **Actions** → **New repository secret**. Name: `GHCR_CLEANUP_TOKEN`, Value: der PAT.
+   - **Variante B – mehrere Repos:** Organisation → **Settings** → **Secrets and variables** → **Actions** → **New organization secret**. Name: `GHCR_CLEANUP_TOKEN`, Value: der PAT. Zugriff auf „Repository access“ beschränken (z. B. nur dieses Repo), wenn gewünscht.
+
+Der Workflow nutzt `account: ${{ github.repository_owner }}`, also den Organisationsnamen – bei Repos unter einer Organisation ist keine weitere Anpassung nötig.
+
+### Alternative Action
+
+Die offizielle Action `actions/delete-package-versions` funktioniert mit `GITHUB_TOKEN`, unterstützt für Container-Packages aber **keine Tag-Muster** (z. B. `dev*`); gefiltert wird nach API-Versionsnamen (Digest), nicht nach Tags. Für „nur `dev*`-Tags bereinigen, 5 behalten, älter als 6 Wochen löschen“ ist `snok/container-retention-policy` mit PAT die passende Wahl.
+
 # Changes for building supported EE for RHAAP
 
 If you want to add supported Automation Hub content, get your Automation Hub token from [here](https://console.redhat.com/ansible/automation-hub/token) and export it in the environment variable `ANSIBLE_GALAXY_SERVER_RH_CERTIFIED_REPO_TOKEN`, login to `registry.redhat.io` with your RedHat credentials and run the following commands:

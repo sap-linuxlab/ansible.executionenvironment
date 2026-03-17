@@ -1,11 +1,13 @@
 name: Cleanup Old SAP-EE Containers
-# currently does not work due to GITHUB TOKEN not support in api.github.com
+# Token: GITHUB_TOKEN funktioniert nicht ("missing field `id`", siehe
+# https://github.com/snok/container-retention-policy/issues/119). Es wird ein klassischer PAT
+# benötigt. Anleitung: siehe DEVELOPER.md Abschnitt "Cleanup-Workflow (GHCR)".
 on:
   # Erlaube manuelles Starten über die GitHub UI
   workflow_dispatch:
-  # Führe den Job wöchentlich aus (Sonntags um 3 Uhr morgens)
-  #schedule:
-  #  - cron: '0 3 * * 0'
+  # Einmal pro Monat (am 1. des Monats um 3:00 UTC)
+  schedule:
+    - cron: '0 3 1 * *'
 
 jobs:
   cleanup:
@@ -16,12 +18,14 @@ jobs:
     steps:
       # Caution may have issues with multiarch images - see https://github.com/snok/container-retention-policy?tab=readme-ov-file#examples
       - name: Delete old sap-ee container images
-        uses: snok/container-retention-policy@v3.0.0
+        uses: snok/container-retention-policy@v3.0.1
         with:
-          account: ${{ github.actor}}
-          token: ${{ secrets.GITHUB_TOKEN }}
+          # Für Organisation: Org-Name; für User-Repos: wörtlich "user" (laut Action-Doku)
+          account: ${{ github.event.repository.owner.type == 'User' && 'user' || github.repository_owner }}
+          # Klassischer PAT mit read:packages + delete:packages (GITHUB_TOKEN funktioniert nicht)
+          token: ${{ secrets.GHCR_CLEANUP_TOKEN }}
           image-names: sap-ee
           image-tags: "dev*"
           cut-off: 6w
           keep-n-most-recent: 5
-          dry-run: true
+          dry-run: false

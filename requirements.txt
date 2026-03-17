@@ -16,7 +16,7 @@ botocore>=1.25.0
 boto3>=1.22.0
 pytz  # for schedule_rrule lookup plugin
 python-dateutil>=2.7.0  # schedule_rrule
-awxkit  # For import and export modulespackaging
+awxkit  # For import and export modules
 dnspython
 packaging
 requests[security]

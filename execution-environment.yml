@@ -26,9 +26,7 @@ dependencies:
         - name: community.aws
         - name: vmware.vmware_rest
         - name: community.vmware
-          #version: 3.9.0
         - name: openstack.cloud
-          #version: 1.8.0
         - name: kubernetes.core
         - name: kubevirt.core
         - name: ovirt.ovirt
@@ -37,6 +35,8 @@ dependencies:
         - name: ansible.utils
         - name: community.general
         - name: community.crypto
+        - name: ibm.power_hmc
+          version: ">=1.0.0"
         # SAP Community Roles
         - name: community.sap_libs
         - name: community.sap_operations
@@ -46,7 +46,7 @@ dependencies:
   python: requirements.txt
   system:
     - python3.12-devel [platform:rpm compile]
-    - openssl [platform:rpm]
+    - openssl [platform:rpm compile]
     - openssl-devel [platform:rpm compile]
     - libxml2 [platform:rpm]
     - libxml2-devel [platform:rpm compile]
@@ -66,9 +66,7 @@ dependencies:
     - gcc [platform:rpm compile]
     - gcc-c++ [platform:rpm compile]
     - make [platform:rpm compile]
-    - cmake [platform:rpm compile]
     - clang [platform:rpm compile]
-    - openssl-devel [platform:rpm compile]
     # binutils [platform:rpm compile]
     # glibc-devel [platform:rpm compile]
     # pkgconf [platform:rpm compile]
@@ -80,7 +78,7 @@ options:
 
 additional_build_steps:
   #prepend_builder:
-  #  - RUN ln -s /usr/bin/gcc /usr/bin/cc  
+  #  - RUN ln -s /usr/bin/gcc /usr/bin/cc
   prepend_base:
     - RUN dnf update -y
   append_base:

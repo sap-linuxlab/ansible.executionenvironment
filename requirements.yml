@@ -1,0 +1,24 @@
+    collections:
+        - name: awx.awx
+        - name: azure.azcollection
+        - name: google.cloud
+        - name: amazon.aws
+        - name: community.aws
+        - name: vmware.vmware_rest
+        - name: community.vmware
+        - name: openstack.cloud
+        - name: kubernetes.core
+        - name: kubevirt.core
+        - name: ovirt.ovirt
+        - name: fedora.linux_system_roles
+        - name: ansible.posix
+        - name: ansible.utils
+        - name: community.general
+        - name: community.crypto
+        - name: ibm.power_hmc
+          version: ">=1.0.0"
+        - name: community.sap_libs
+        - name: community.sap_operations
+        - name: community.sap_install
+        - name: community.sap_launchpad
+        - name: community.sap_infrastructure
