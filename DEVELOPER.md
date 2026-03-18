@@ -18,7 +18,7 @@ If you do not want to use that, feel free to create your own build environment.
 
    ```bash
    cd ansible.executionenvironment
-   ee_dir=$(pwd)
+   export ee_dir=$(pwd)
    ```
 
 3. Start the build environment
