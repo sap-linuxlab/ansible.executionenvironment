@@ -43,11 +43,19 @@ dependencies:
     - python3.12-devel
     - openssl
     - openssl-devel
+    - cargo
 
 options:
   package_manager_path: /usr/bin/dnf
 
 additional_build_steps:
+  prepend_builder:
+    # On ppc64le, disable compiler optimization to prevent OOM kills when
+    # cross-compiling large Cython extensions (e.g. pandas) via qemu.
+    # A wrapper shell conditionally sets CFLAGS only on ppc64le so that
+    # x86_64 and aarch64 builds keep full -O3 optimization.
+    - RUN printf '#!/bin/bash\nif [ "$(uname -m)" = "ppc64le" ]; then\n  export CFLAGS="-O0 -g0"\n  export CXXFLAGS="-O0 -g0"\nfi\nexec /bin/bash "$@"\n' > /usr/local/bin/build-shell && chmod +x /usr/local/bin/build-shell
+    - 'SHELL ["/usr/local/bin/build-shell", "-c"]'
   prepend_base:
     - RUN dnf update -y
   append_final:
