@@ -1,3 +1,5 @@
+# yamllint disable rule:line-length rule:key-duplicates rule:document-start
+# (ansible-builder [platform:...] syntax and long RUN lines required)
 version: 3
 
 images:

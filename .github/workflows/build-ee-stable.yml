@@ -1,3 +1,5 @@
+# yamllint disable rule:line-length rule:truthy rule:document-start
+# (Long run blocks and workflow syntax required; path comment above)
  #.github/workflows/build-ee-stable.yml
 name: Build and Push stable Multi-Arch Execution Environment
 

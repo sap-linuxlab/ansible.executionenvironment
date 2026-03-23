@@ -1,3 +1,5 @@
+# yamllint disable rule:line-length rule:truthy rule:document-start
+# (Workflow expressions and cron syntax required)
 name: Cleanup Old SAP-EE Containers
 # Token: GITHUB_TOKEN funktioniert nicht ("missing field `id`", siehe
 # https://github.com/snok/container-retention-policy/issues/119). Es wird ein klassischer PAT
