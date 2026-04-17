@@ -18,7 +18,7 @@ If you do not want to use that, feel free to create your own build environment.
 
    ```bash
    cd ansible.executionenvironment
-   ee_dir=$(pwd)
+   export ee_dir=$(pwd)
    ```
 
 3. Start the build environment
@@ -130,9 +130,9 @@ Der Workflow nutzt `account: ${{ github.repository_owner }}`, also den Organisat
 
 Die offizielle Action `actions/delete-package-versions` funktioniert mit `GITHUB_TOKEN`, unterstützt für Container-Packages aber **keine Tag-Muster** (z. B. `dev*`); gefiltert wird nach API-Versionsnamen (Digest), nicht nach Tags. Für „nur `dev*`-Tags bereinigen, 5 behalten, älter als 6 Wochen löschen“ ist `snok/container-retention-policy` mit PAT die passende Wahl.
 
-# Changes for building supported EE for RHAAP
+## Changes for building supported EE for RHAAP
 
-If you want to add supported Automation Hub content, get your Automation Hub token from [here](https://console.redhat.com/ansible/automation-hub/token) and export it in the environment variable `ANSIBLE_GALAXY_SERVER_RH_CERTIFIED_REPO_TOKEN`, login to `registry.redhat.io` with your RedHat credentials and run the following commands:
+If you want to add supported Automation Hub content, get your Automation Hub token from [Red Hat Automation Hub](https://console.redhat.com/ansible/automation-hub/token) and export it in the environment variable `ANSIBLE_GALAXY_SERVER_RH_CERTIFIED_REPO_TOKEN`, login to `registry.redhat.io` with your RedHat credentials and run the following commands:
 
 ```bash
 export ANSIBLE_GALAXY_SERVER_RH_CERTIFIED_REPO_TOKEN=_your token_
