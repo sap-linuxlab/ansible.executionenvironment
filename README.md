@@ -14,7 +14,7 @@ It is planned to create execution environments with supported ansible versions, 
 
 ## Requirememts
 
-you need a working podman installation on MacOS, or Linux x86_64.
+you need a working podman installation on MacOS, or Linux x86_64 or ppc64le.
 
 ## Use with ansible-navigator
 
@@ -90,8 +90,7 @@ All Images use:
 
 ## TODO
 
-1. add ppcle platform
-2. add suse leap as base image
+add suse leap as base image
 
 You can use the `execution_environment*.yml` files as a basis to create your own execution environments.
 Read [the developer documentation](DEVELOPER.md) for details
