@@ -20,7 +20,7 @@ jobs:
     steps:
       # Caution may have issues with multiarch images - see https://github.com/snok/container-retention-policy?tab=readme-ov-file#examples
       - name: Delete old sap-ee container images
-        uses: snok/container-retention-policy@v3.0.1
+        uses: snok/container-retention-policy@v3.1.0
         with:
           # Für Organisation: Org-Name; für User-Repos: wörtlich "user" (laut Action-Doku)
           account: ${{ github.event.repository.owner.type == 'User' && 'user' || github.repository_owner }}
