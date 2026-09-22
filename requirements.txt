@@ -28,3 +28,5 @@ beautifulsoup4
 lxml
 # for creating kickstart files
 passlib
+# for compiling on ppc64le and Centos9
+pycurl<7.48
