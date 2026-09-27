@@ -1,0 +1,117 @@
+# yamllint disable rule:line-length rule:truthy rule:document-start
+# .github/workflows/build-ee-leap.yml
+#
+# Builds the openSUSE Leap 16.0 sap-ee (execution-environment-leap.yml) on the matching
+# ee-leap-base; run build-ee-leap-base.yml first with the same ansible_core input.
+name: Build and Push Leap 16.0 Multi-Arch Execution Environment
+
+on:
+  workflow_dispatch:
+    inputs:
+      ansible_core:
+        description: "ansible-core stream (openSUSE RPMs; python is always 3.13 on Leap 16.0)"
+        type: choice
+        options: ["2.18", "2.19", "2.20", "2.21"]
+        default: "2.20"
+
+env:
+  REGISTRY: ghcr.io
+  ANSIBLER_BUILDER_CONFIG: execution-environment-leap.yml
+
+jobs:
+  generate-tag:
+    runs-on: ubuntu-latest
+    outputs:
+      image_tag: ${{ steps.tag.outputs.tag }}
+      variant: ${{ steps.tag.outputs.variant }}
+      core: ${{ steps.tag.outputs.core }}
+      core_pkg: ${{ steps.tag.outputs.core_pkg }}
+      owner: ${{ steps.tag.outputs.owner }}
+    steps:
+      # Tag scheme: YYMMDD-P<python>A<ansible-core><OS>, e.g. 260926-P313A220SL16
+      - name: Compute image tag
+        id: tag
+        env:
+          CORE: ${{ inputs.ansible_core || '2.20' }}
+        run: |
+          variant="P313A${CORE//./}SL16"
+          # 2.21 is the unversioned ansible-core RPM; older streams are ansible-core-<x.y>
+          if [ "$CORE" = "2.21" ]; then core_pkg=ansible-core; else core_pkg="ansible-core-${CORE}"; fi
+          {
+            # image names must be lowercase
+            echo "owner=${GITHUB_REPOSITORY_OWNER,,}"
+            echo "core=${CORE}"
+            echo "core_pkg=${core_pkg}"
+            echo "variant=${variant}"
+            echo "tag=$(date +'%y%m%d')-${variant}"
+          } >> "$GITHUB_OUTPUT"
+  build:
+    runs-on: ubuntu-latest
+    needs: generate-tag
+    env:
+      IMAGE_NAME: ${{ needs.generate-tag.outputs.owner }}/sap-ee
+    permissions:
+      contents: read
+      packages: write
+    strategy:
+      fail-fast: false
+      matrix:
+        platform:
+          - amd64
+          - arm64
+          # ppc64le: not validated for Leap yet
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v4
+        with:
+          platforms: all
+
+      - name: Log in to the Container Registry
+        uses: docker/login-action@v4
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Create build context
+        run: |
+          pip install ansible-builder
+          # explicit filename: ansible-builder picks Containerfile or Dockerfile by runtime
+          ansible-builder create -v 3 --output-filename Containerfile -f ${{ env.ANSIBLER_BUILDER_CONFIG }}
+
+      - name: Build and push platform-specific image
+        run: |
+          podman build \
+            --platform=linux/${{ matrix.platform }} \
+            --build-arg PKGMGR_PRESERVE_CACHE=always \
+            --build-arg ANSIBLE_GALAXY_CLI_COLLECTION_OPTS="--timeout 120" \
+            --build-arg EE_BASE_IMAGE=${{ env.REGISTRY }}/${{ needs.generate-tag.outputs.owner }}/ee-leap-base:${{ needs.generate-tag.outputs.variant }} \
+            --tag ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ needs.generate-tag.outputs.image_tag }}_${{ matrix.platform }} \
+            --layers=false \
+            -f context/Containerfile context
+          podman push ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ needs.generate-tag.outputs.image_tag }}_${{ matrix.platform }}
+
+  create-manifest:
+    runs-on: ubuntu-latest
+    needs: [generate-tag, build]
+    env:
+      IMAGE_NAME: ${{ needs.generate-tag.outputs.owner }}/sap-ee
+    steps:
+      - name: Log in to the Container Registry
+        uses: docker/login-action@v4
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Create and push manifest list
+        run: |
+          podman manifest create ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ needs.generate-tag.outputs.image_tag }}
+          podman manifest add ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ needs.generate-tag.outputs.image_tag }} docker://${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ needs.generate-tag.outputs.image_tag }}_amd64
+          podman manifest add ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ needs.generate-tag.outputs.image_tag }} docker://${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ needs.generate-tag.outputs.image_tag }}_arm64
+          podman manifest push ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ needs.generate-tag.outputs.image_tag }}
+          podman tag ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ needs.generate-tag.outputs.image_tag }} ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest-${{ needs.generate-tag.outputs.variant }}
+          podman manifest push ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest-${{ needs.generate-tag.outputs.variant }}

@@ -1,0 +1,73 @@
+# yamllint disable rule:line-length rule:key-duplicates rule:document-start
+# (ansible-builder [platform:...] syntax and long RUN lines required)
+#
+# openSUSE Leap 16.0 SAP EE, built on ee-leap-base (execution-environment-leap-base.yml) the way
+# execution-environment-rh.yml builds on ee-minimal-rhel9: ansible-core and ansible-runner come
+# from the base; this adds the build toolchain and the SAP collection set.
+# Build with --build-arg PKGMGR_PRESERVE_CACHE=always (zypper rejects `clean all`).
+version: 3
+
+images:
+  base_image:
+    # CI sets EE_BASE_IMAGE=ghcr.io/<owner>/ee-leap-base:P313A<core>SL16.
+    # Planned: build on registry.opensuse.org/systemsmanagement/ansible/containerfile/opensuse/ansible-ee-minimal-leap16:2.20
+    # (https://build.opensuse.org/request/show/1380797) once it is published for amd64 and arm64, then drop
+    # execution-environment-leap-base.yml and build-ee-leap-base.yml (it carries ansible-core 2.20 only).
+    name: ee-leap-base:dev
+
+dependencies:
+  # ansible_core / ansible_runner are intentionally OMITTED — inherited from ee-leap-base.
+  python_interpreter:
+    # No package_system here: python313 is already installed in the base. python_path is
+    # kept so ansible-builder's bindep/introspection targets the right interpreter.
+    python_path: "/usr/bin/python3.13"
+  galaxy:
+    roles:
+      - src: mk-ansible-roles.check_reboot
+      - src: mk-ansible-roles.setup_nfs_server
+    collections:
+      - name: awx.awx
+      - name: azure.azcollection
+        version: ">=2.1.0"
+      - name: google.cloud
+      - name: amazon.aws
+      - name: community.aws
+      - name: vmware.vmware_rest
+      - name: community.vmware
+      - name: openstack.cloud
+      - name: kubernetes.core
+      - name: kubevirt.core
+      - name: ovirt.ovirt
+      - name: fedora.linux_system_roles
+      - name: ansible.posix
+      - name: ansible.utils
+      - name: community.general
+      - name: community.crypto
+      - name: ibm.power_hmc
+        version: ">=1.0.0"
+        # SAP Community Roles
+      - name: community.sap_libs
+      - name: community.sap_operations
+      - name: community.sap_install
+      - name: community.sap_launchpad
+      - name: community.sap_infrastructure
+  python: requirements.txt
+  system: []
+
+options:
+  package_manager_path: /usr/bin/zypper
+  skip_ansible_check: true
+
+additional_build_steps:
+  prepend_base:
+    # SUSE names for the dnf variant's packages (e.g. openssl-devel -> libopenssl-devel).
+    - RUN zypper --non-interactive refresh
+    - RUN zypper --non-interactive install -y --no-recommends
+        gcc gcc-c++ make cmake clang cargo
+        libopenssl-devel openssl libxml2-2 libxml2-devel libcurl-devel
+        krb5-devel krb5-client
+        git-lfs subversion podman-remote
+  append_base:
+    - RUN $PYCMD -m pip install -U pip
+  append_final:
+    - RUN zypper clean --all
