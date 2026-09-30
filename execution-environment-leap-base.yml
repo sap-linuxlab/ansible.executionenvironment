@@ -1,0 +1,47 @@
+# yamllint disable rule:line-length rule:key-duplicates rule:document-start
+# (ansible-builder [platform:...] syntax and long RUN lines required)
+#
+# openSUSE Leap 16.0 base EE: python 3.13 + ansible-core + ansible-runner, no collections.
+# ansible-core and ansible-runner are the openSUSE RPMs from systemsmanagement:ansible/16.0,
+# so they are left out of dependencies and skip_ansible_check is set.
+#
+# Build with --build-arg PKGMGR_PRESERVE_CACHE=always (zypper rejects `clean all`).
+# ansible-core stream, default 2.20: --build-arg ANSIBLE_CORE_PKG=ansible-core-2.18, -2.19, -2.20
+# or ansible-core (2.21), with the matching ANSIBLE_CORE_VERSION; the build fails if they differ.
+#
+# Interim: to be replaced by registry.opensuse.org/systemsmanagement/ansible/containerfile/opensuse/ansible-ee-minimal-leap16:2.20
+# (https://build.opensuse.org/request/show/1380797) once it is published for amd64 and arm64.
+version: 3
+
+images:
+  base_image:
+    name: registry.opensuse.org/opensuse/leap:16.0
+
+dependencies:
+  python_interpreter:
+    package_system: "python313"
+    python_path: "/usr/bin/python3.13"
+  system: []
+
+options:
+  package_manager_path: /usr/bin/zypper
+  skip_ansible_check: true
+
+additional_build_steps:
+  prepend_base:
+    # Leap 16.0's own repos ship no ansible; import the repo key explicitly (no auto-import).
+    - RUN rpm --import https://download.opensuse.org/repositories/systemsmanagement:/ansible/16.0/repodata/repomd.xml.key
+    - RUN zypper --non-interactive addrepo -f https://download.opensuse.org/repositories/systemsmanagement:/ansible/16.0/ sm-ansible
+    - RUN zypper --non-interactive refresh
+    - ARG ANSIBLE_CORE_PKG=ansible-core-2.20
+    - ARG ANSIBLE_CORE_VERSION=2.20
+    - RUN zypper --non-interactive install -y --no-recommends
+        python313 python313-pip python313-devel python313-setuptools python313-wheel
+        openssh-clients sshpass less git-core rsync unzip
+        $ANSIBLE_CORE_PKG ansible-runner
+    - RUN /usr/bin/python3.13 -c "import sys, ansible.release as r; v=r.__version__; sys.exit(0 if v.startswith('$ANSIBLE_CORE_VERSION.') else 'ansible-core ' + v + ' installed, expected $ANSIBLE_CORE_VERSION.x')"
+  append_base:
+    - RUN $PYCMD -m pip install -U pip
+  append_final:
+    - RUN zypper clean --all
+    - RUN update-alternatives --install /usr/bin/python python /usr/bin/python3.13 313

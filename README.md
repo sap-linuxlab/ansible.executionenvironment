@@ -6,6 +6,10 @@
 
 [![Centos 9 weekky Execution Environment](https://github.com/sap-linuxlab/ansible.executionenvironment/actions/workflows/build-ee-stable.yml/badge.svg)](https://github.com/sap-linuxlab/ansible.executionenvironment/actions/workflows/build-ee-stable.yml)
 
+[![Leap 16.0 Base Execution Environment](https://github.com/sap-linuxlab/ansible.executionenvironment/actions/workflows/build-ee-leap-base.yml/badge.svg)](https://github.com/sap-linuxlab/ansible.executionenvironment/actions/workflows/build-ee-leap-base.yml)
+
+[![Leap 16.0 SAP Execution Environment](https://github.com/sap-linuxlab/ansible.executionenvironment/actions/workflows/build-ee-leap.yml/badge.svg)](https://github.com/sap-linuxlab/ansible.executionenvironment/actions/workflows/build-ee-leap.yml)
+
 ## Overview
 
 The goal of this repository is to create and maintain execution environments for all supported platforms for the community collections. The resulting contaners can be used for consistant development and testing.
@@ -52,8 +56,10 @@ The execution environments are multi-arch images build for arm64 and amd64 archt
 - ghcr.io/sap-linuxlab/sap-ee:latest        contains the latest collections as published on galaxy.ansible.com
 - ghcr.io/sap-linuxlab/sap-ee:latest-dev    contains latest sap collections from sap-linuxlab dev-branch and other latest published collections from galaxy.ansible.com
 - ghcr.io/sap-linuxlab/sap-ee:stable        contains well defined collection versions
+- ghcr.io/sap-linuxlab/sap-ee:latest-P313A220SL16  sap-ee on openSUSE Leap 16.0
+- ghcr.io/sap-linuxlab/ee-leap-base:P313A220SL16    openSUSE Leap 16.0 base EE (no collections) that the Leap sap-ee is built on
 
-All other execution environments are tagged with `[dev|stable-]YYMMDD`. For a complete list see [github packages](https://github.com/sap-linuxlab/ansible.executionenvironment/pkgs/container/sap-ee)
+All other execution environments are tagged with `[dev|stable-]YYMMDD`; the openSUSE Leap images with `YYMMDD-P<python>A<ansible-core><OS>` (e.g. `260926-P313A220SL16`). For a complete list see [github packages](https://github.com/sap-linuxlab/ansible.executionenvironment/pkgs/container/sap-ee)
 
 The following table contains the list of collections in sap-ee with the according tag.
 (latest means latest version from galaxy, dev means current upstream github dev tree)
@@ -83,14 +89,19 @@ community.sap_install        |   1.9.0 | latest | dev
 community.sap_launchpad      |   1.3.1 | latest | dev
 community.sap_infrastructure |   1.3.1 | latest | dev
 
-All Images use:
+All CentOS-based images use:
 
 - python 3.12.x
 - ansible-core 2.17.x
 
+The openSUSE Leap 16.0 images use:
+
+- python 3.13.x
+- ansible-core 2.20.x from the openSUSE RPMs (2.18, 2.19 and 2.21 via the workflows' `ansible_core` input)
+
 ## TODO
 
-add suse leap as base image
+ppc64le for the Leap images
 
 You can use the `execution_environment*.yml` files as a basis to create your own execution environments.
 Read [the developer documentation](DEVELOPER.md) for details

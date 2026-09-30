@@ -31,3 +31,25 @@ jobs:
           cut-off: 6w
           keep-n-most-recent: 5
           dry-run: false
+      # Leap variant of sap-ee: prune dated YYMMDD-P313A<core>SL16 tags (latest-P313A<core>SL16 is kept)
+      - name: Delete old sap-ee Leap container images
+        uses: snok/container-retention-policy@v3.1.0
+        with:
+          account: ${{ github.event.repository.owner.type == 'User' && 'user' || github.repository_owner }}
+          token: ${{ secrets.GHCR_CLEANUP_TOKEN }}
+          image-names: sap-ee
+          image-tags: "2*SL16*"
+          cut-off: 6w
+          keep-n-most-recent: 5
+          dry-run: false
+      # Leap base EE: prune dated YYMMDD-... tags, keep the moving P313A<core>SL16 tags sap-ee builds on
+      - name: Delete old ee-leap-base container images
+        uses: snok/container-retention-policy@v3.1.0
+        with:
+          account: ${{ github.event.repository.owner.type == 'User' && 'user' || github.repository_owner }}
+          token: ${{ secrets.GHCR_CLEANUP_TOKEN }}
+          image-names: ee-leap-base
+          image-tags: "2*"
+          cut-off: 6w
+          keep-n-most-recent: 5
+          dry-run: false
